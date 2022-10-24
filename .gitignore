@@ -1,0 +1,13 @@
+# ignore all
+/venv
+/odoo-15.0/*
+/.idea
+/odoo-15.0/.mailmap
+
+#  Except for this:
+!LICENSE
+!README.md
+!.gitignore
+!requirements.txt
+!custom_addons
+
