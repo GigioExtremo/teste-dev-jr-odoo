@@ -11,5 +11,3 @@
 !requirements.txt
 !custom_addons
 
-# Database properties: ignore
-/database.properties
