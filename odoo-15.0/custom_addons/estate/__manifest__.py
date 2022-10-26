@@ -9,7 +9,9 @@
     """,
     'depends': [],
     'data': [
-        'security\\ir.model.access.csv'
+        'security\\ir.model.access.csv',
+        'views\\estate_views.xml',
+        'views\\estate_menus.xml'
     ],
     'installable': True,
     'auto_install': False,
