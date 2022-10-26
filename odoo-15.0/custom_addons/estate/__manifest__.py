@@ -8,7 +8,9 @@
         A beginner's module from Odoo tutorial.
     """,
     'depends': [],
-    'data': [],
+    'data': [
+        'security\\ir.model.access.csv'
+    ],
     'installable': True,
     'auto_install': False,
     "application": True,
