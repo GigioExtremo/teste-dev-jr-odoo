@@ -1,5 +1,5 @@
 from dateutil.relativedelta import relativedelta
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ImmobileModel(models.Model):
@@ -10,10 +10,11 @@ class ImmobileModel(models.Model):
     name = fields.Char(string="Title", default="Unknown", required=True)
     last_seen = fields.Datetime("Last Seen", default=lambda self: fields.Datetime.now())
     description = fields.Text(string="Description")
+
     postcode = fields.Char(string="Postcode")
     date_availability = fields.Date(string="Available From",
                                     # default value: today's date plus 3 months
-                                    default=lambda self: fields.Date.add(fields.Date.today(), relativedelta(+3)))
+                                    default=lambda self: fields.Date.add(fields.Date.today(), relativedelta(months=+3)))
 
     expected_price = fields.Float(string="Expected Price", required=True)
     selling_price = fields.Float(string="Selling Price", readonly=True)
@@ -33,6 +34,10 @@ class ImmobileModel(models.Model):
                                           selection=[("north", "North"), ("south", "South"), ("east", "East"),
                                                      ("west", "West")])
 
+    total_area = fields.Integer(compute="_compute_total_area", string="Total Area (sqm)")
+
+    # Relational fields
+
     property_type_id = fields.Many2one('estate.property.type', string="Property Type")
     property_type_name = fields.Char(string='Property Type Name', related='property_type_id.name', readonly=True,
                                      default=property_type_id.name)
@@ -46,3 +51,28 @@ class ImmobileModel(models.Model):
     tags_ids = fields.Many2many("estate.property.tag", string="Tags")
 
     offers_ids = fields.One2many("estate.property.offer", "property_id")
+    best_price = fields.Float(compute="_compute_best_price", string="Best Offer")
+
+    # Computed Methods
+
+    @api.depends('garden_area', 'living_area')
+    def _compute_total_area(self):
+        for record in self:
+            record.total_area = record.garden_area + record.living_area
+
+    @api.depends('offers_ids.price')
+    def _compute_best_price(self):
+        for record in self:
+            if len(record.offers_ids) == 0:
+                record.best_price = 0.0
+            else:
+                record.best_price = max([offer.price for offer in record.offers_ids])
+
+    @api.onchange('garden')
+    def _onchange_garden(self):
+        if self.garden:
+            self.garden_area = 10
+            self.garden_orientation = 'north'
+        else:
+            self.garden_area = 0
+            self.garden_orientation = ''
