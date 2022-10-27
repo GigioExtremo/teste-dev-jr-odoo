@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 
 
 class ImmobileModel(models.Model):
@@ -18,10 +19,10 @@ class ImmobileModel(models.Model):
 
     expected_price = fields.Float(string="Expected Price", required=True)
     selling_price = fields.Float(string="Selling Price", readonly=True)
-    state = fields.Selection(string="State",
+    state = fields.Selection(string="Status",
                              selection=[("new", "New"), ("offer_received", "Offer Received"),
                                         ("offer_accepted", "Offer Accepted"),
-                                        ("sold", "Sold"), ("canceled", "Canceled")], default="new")
+                                        ("sold", "Sold"), ("canceled", "Canceled")], default="new", readonly=True)
     bedrooms = fields.Integer(string="Bedrooms", default=2)
     living_area = fields.Integer(string="Living Area (sqm)")
     facades = fields.Integer(string="Facades")
@@ -76,3 +77,28 @@ class ImmobileModel(models.Model):
         else:
             self.garden_area = 0
             self.garden_orientation = ''
+
+    # @api.onchange("offers_id")
+    # def _onchange_offers(self):
+    #     if self.state == 'new':
+    #         self.state = 'offer_received'
+
+    # Buttons Logic
+    def sell_property(self):
+        for record in self:
+            if record.state == "canceled":
+                raise UserError('The property sale is canceled. It can\'t be sold.')
+
+            record.state = "sold"
+        return True
+
+    def cancel_deal(self):
+        for record in self:
+            if record.state == "sold":
+                raise UserError('The property was sold already. It can\'t be canceled.')
+
+            record.state = "canceled"
+
+            # for offer in record.offers_ids:
+            #     offer.status = 'refused'
+        return True

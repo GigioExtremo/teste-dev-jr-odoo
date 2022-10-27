@@ -5,11 +5,13 @@
         <field name="model">estate.property.offer</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="partner_id" string="Partner"/>
                 <field name="price"/>
-                <field name="status"/>
+                <field name="partner_id" string="Partner"/>
                 <field name="validity"/>
                 <field name="deadline_date"/>
+                <button name="accept_offer" type="object" string="Accept" icon="fa-check"/>
+                <button name="deny_offer" type="object" string="Deny" icon="fa-level-down"/>
+                <field name="status"/>
             </tree>
         </field>
     </record>

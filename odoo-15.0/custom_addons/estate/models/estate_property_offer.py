@@ -1,14 +1,15 @@
 from dateutil.relativedelta import relativedelta
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 
 
 class OfferModel(models.Model):
     _name = "estate.property.offer"
     _description = "Real Estate Model (Property Offer)"
 
-    price = fields.Float(string="Price")
+    price = fields.Float(string="Expected Price")
     status = fields.Selection(string="Status", nocopy=True,
-                              selection=[("accepted", "Accepted"), ("refused", "Refused")])
+                              selection=[("accepted", "Accepted"), ("refused", "Refused")], readonly=True)
 
     validity = fields.Integer(string="Validity", default=7)
     deadline_date = fields.Date(compute="_compute_deadline_date", inverse="_inverse_deadline_date",
@@ -38,3 +39,34 @@ class OfferModel(models.Model):
                 creation_date = fields.Date.today()
 
             record.validity = abs((record.deadline_date - creation_date).days)
+
+    def accept_offer(self):
+        for record in self:
+            if record.status == 'accepted':
+                continue
+
+            if record.property_id.state == 'offer_accepted':
+                raise UserError("Another offer was already accepted.")
+            if record.status == "refused":
+                raise UserError("The offer was already refused.")
+            if record.property_id.state == "sold":
+                raise UserError('The property was sold already.')
+            if record.property_id.state == "canceled":
+                raise UserError('The property sale was canceled.')
+
+            record.status = "accepted"
+            record.property_id.state = 'offer_accepted'
+            record.property_id.selling_price = record.price
+            record.property_id.buyer_id = record.partner_id
+
+        return True
+
+    def deny_offer(self):
+        for record in self:
+            if record.property_id.state == "canceled":
+                raise UserError('The property sale was canceled.')
+            if record.status == "accepted":
+                raise UserError("The offer was already accepted.")
+
+            record.status = "refused"
+        return True
