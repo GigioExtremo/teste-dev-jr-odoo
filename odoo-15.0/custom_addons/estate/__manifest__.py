@@ -10,7 +10,9 @@
     'depends': [],
     'data': [
         'security\\ir.model.access.csv',
-        'views\\estate_views.xml',
+        'views\\estate_settings_views.xml',
+        'views\\estate_advertisements_views.xml',
+        'views\\estate_offers_views.xml',
         'views\\estate_menus.xml'
     ],
     'installable': True,

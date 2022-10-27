@@ -2,7 +2,6 @@
 /venv
 /odoo-15.0/*
 /.idea
-/odoo-15.0/.mailmap
 
 #  Except for this:
 !LICENSE
@@ -11,3 +10,5 @@
 !requirements.txt
 !custom_addons
 
+/odoo-15.0/.mailmap
+/database.properties
