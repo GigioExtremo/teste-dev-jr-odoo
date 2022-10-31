@@ -1,6 +1,8 @@
 from dateutil.relativedelta import relativedelta
 from odoo import api, fields, models
 from odoo.exceptions import UserError
+from odoo.exceptions import ValidationError
+from odoo.tools.float_utils import float_is_zero
 
 
 class ImmobileModel(models.Model):
@@ -43,7 +45,7 @@ class ImmobileModel(models.Model):
     property_type_name = fields.Char(string='Property Type Name', related='property_type_id.name', readonly=True,
                                      default=property_type_id.name)
 
-    buyer_id = fields.Many2one('res.partner', string="Buyer", nocopy=True)
+    buyer_id = fields.Many2one('res.partner', string="Buyer", readonly=True)
     buyer_name = fields.Char(string='Buyer Name', related='buyer_id.name', readonly=True)
 
     seller_id = fields.Many2one('res.users', string="Seller", default=lambda self: self.env.user)
@@ -53,6 +55,26 @@ class ImmobileModel(models.Model):
 
     offers_ids = fields.One2many("estate.property.offer", "property_id")
     best_price = fields.Float(compute="_compute_best_price", string="Best Offer")
+
+    _sql_constraints = [
+        ('estate_property_expected_price_positive', 'CHECK(expected_price > 0)',
+         'The expected price must be strictly positive.'),
+        ('estate_property_selling_price_positive', 'CHECK(selling_price >= 0)',
+         'The selling price must be strictly positive.')
+    ]
+
+    # Python Constraints
+
+    @api.constrains('selling_price', 'expected_price')
+    def _check_selling_price_90pct_expected(self):
+        for record in self:
+            if float_is_zero(record.selling_price, 1) and record.state in ('new', 'offer_received'):
+                continue
+
+            if record.selling_price < (record.expected_price * 0.9):
+                raise ValidationError(
+                    "The selling price must be 90% of the expected price! "
+                    + "You must reduce the expected price if you want to accept this offer!")
 
     # Computed Methods
 
@@ -77,11 +99,6 @@ class ImmobileModel(models.Model):
         else:
             self.garden_area = 0
             self.garden_orientation = ''
-
-    # @api.onchange("offers_id")
-    # def _onchange_offers(self):
-    #     if self.state == 'new':
-    #         self.state = 'offer_received'
 
     # Buttons Logic
     def sell_property(self):

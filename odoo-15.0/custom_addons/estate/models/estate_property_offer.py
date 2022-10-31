@@ -8,7 +8,7 @@ class OfferModel(models.Model):
     _description = "Real Estate Model (Property Offer)"
 
     price = fields.Float(string="Expected Price")
-    status = fields.Selection(string="Status", nocopy=True,
+    status = fields.Selection(string="Status",
                               selection=[("accepted", "Accepted"), ("refused", "Refused")], readonly=True)
 
     validity = fields.Integer(string="Validity", default=7)
@@ -17,6 +17,11 @@ class OfferModel(models.Model):
 
     partner_id = fields.Many2one('res.partner', string="Buyer ID", required=True)
     property_id = fields.Many2one('estate.property', string="Property ID", required=True)
+
+    _sql_constraints = [
+        ('estate_property_offer_price_positive', 'CHECK(price > 0)',
+         'The offer price must be strictly positive.')
+    ]
 
     # Computed methods
 
