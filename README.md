@@ -38,7 +38,7 @@ Pronto! Agora é só dar o `pip install -r requirements.txt` para instalar os re
 Alguns passos para configurar o Odoo 15 e ligar ele com o PostgreSQL 
 
 ###  Inicie o PostGreSQL e crie um usuário pro Odoo
-Você pode fazer isso com a ferramenta `pgAdmin4` que vem com o PostGreSQL.
+Você pode fazer isso com a ferramenta `pgAdmin4` que vem com o PostgreSQL.
 
 ### Crie o  arquivo de configuração do odoo
 Crie um arquivo dentro da pasta raiz do Odoo 15 chamado de odoo.conf e coloque as seguintes informações nele:
@@ -63,4 +63,4 @@ Isso vai depender da IDE que você está usando, mas o básico que você deve sa
 - Coloque como argumento para esse script `-c {caminho absoluto para o "odoo-15.0\odoo.conf"}`
 - Selecione o Python 3.8 como interpretador, preferencialmente dentro de um Ambiente Virtual (venv)
 
-Agora, é só iniciar o PostgreeSQL e executar o debug para continuar seguindo comm o tutorial do Odoo!
+Agora, é só iniciar o PostgreeSQL e executar o debug para continuar seguindo com o tutorial do Odoo!

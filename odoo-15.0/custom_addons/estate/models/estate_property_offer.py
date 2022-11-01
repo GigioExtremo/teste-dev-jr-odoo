@@ -6,6 +6,7 @@ from odoo.exceptions import UserError
 class OfferModel(models.Model):
     _name = "estate.property.offer"
     _description = "Real Estate Model (Property Offer)"
+    _order = "price desc"
 
     price = fields.Float(string="Expected Price")
     status = fields.Selection(string="Status",
@@ -17,6 +18,8 @@ class OfferModel(models.Model):
 
     partner_id = fields.Many2one('res.partner', string="Buyer ID", required=True)
     property_id = fields.Many2one('estate.property', string="Property ID", required=True)
+    property_type_id = fields.Many2one('estate.property.type', related="property_id.property_type_id",
+                                       string="Property Type ID", store=True)
 
     _sql_constraints = [
         ('estate_property_offer_price_positive', 'CHECK(price > 0)',
