@@ -13,7 +13,8 @@
         'views\\estate_settings_views.xml',
         'views\\estate_advertisements_views.xml',
         'views\\estate_offers_views.xml',
-        'views\\estate_menus.xml'
+        'views\\estate_menus.xml',
+        'views\\res_user_property_view.xml'
     ],
     'installable': True,
     'auto_install': False,

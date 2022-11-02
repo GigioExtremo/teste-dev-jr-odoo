@@ -43,8 +43,8 @@ class ImmobileModel(models.Model):
     # Relational fields
 
     property_type_id = fields.Many2one('estate.property.type', string="Property Type")
-    property_type_name = fields.Char(string='Property Type Name', related='property_type_id.name', readonly=True,
-                                     default=property_type_id.name)
+    property_type_name = fields.Char(string='Property Type Name', related='property_type_id.name',
+                                     readonly=True, default=property_type_id.name)
 
     buyer_id = fields.Many2one('res.partner', string="Buyer", readonly=True)
     buyer_name = fields.Char(string='Buyer Name', related='buyer_id.name', readonly=True)
@@ -100,6 +100,14 @@ class ImmobileModel(models.Model):
         else:
             self.garden_area = 0
             self.garden_orientation = ''
+
+    # CRUD
+
+    @api.ondelete(at_uninstall=False)
+    def _unlink_if_property_state_new_canceled(self):
+        for record in self:
+            if record.state not in ('new', 'canceled'):
+                raise UserError('Only new and canceled properties can be deleted.')
 
     # Buttons Logic
     def sell_property(self):

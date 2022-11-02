@@ -48,6 +48,25 @@ class OfferModel(models.Model):
 
             record.validity = abs((record.deadline_date - creation_date).days)
 
+    # CRUD
+
+    @api.model
+    def create(self, vals):
+
+        property_obj = self.env['estate.property'].browse(vals['property_id'])
+
+        highest_offer = max([offer['price'] for offer in property_obj['offers_ids']])
+
+        if vals['price'] <= highest_offer:
+            raise UserError(f"The offer must be higher than {highest_offer}")
+
+        if property_obj['state'] == 'new':
+            property_obj['state'] = 'offer_received'
+
+        return super().create(vals)
+
+    # Button Logic
+
     def accept_offer(self):
         for record in self:
             if record.status == 'accepted':
