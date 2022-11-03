@@ -5,7 +5,8 @@
         <field name="name">estate.property.tree</field>
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
-            <tree string="Tags" decoration-bf="state=='offer_accepted'" decoration-success="state in ['offer_received', 'offer_accepted']" decoration-muted="state=='sold'">
+            <tree string="Tags" decoration-bf="state=='offer_accepted'"
+                  decoration-success="state in ['offer_received', 'offer_accepted']" decoration-muted="state=='sold'">
                 <field name="state" invisible="1"/>
                 <field name="name"/>
                 <field name="property_type_id" string="Property Type"/>
@@ -17,6 +18,32 @@
                 <field name="selling_price"/>
                 <field name="date_availability" optional="hide"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="estate_property_kanban" model="ir.ui.view">
+        <field name="name">estate.property.kanban</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="property_type_id" records_draggable="false">
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <field name="name"/>
+                            <div>
+                                Expected Price: <field name="expected_price"/>
+                            </div>
+                            <div t-if="record.best_price.raw_value > 0.0">
+                                Best Offer: <field name="best_price"/>
+                            </div>
+                            <div t-if="record.selling_price.raw_value > 0.0">
+                                Selling Price: <field name="selling_price"/>
+                            </div>
+                            <field name="tags_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
         </field>
     </record>
 
@@ -111,7 +138,7 @@
     <record id="estate_property_action" model="ir.actions.act_window">
         <field name="name">Properties</field>
         <field name="res_model">estate.property</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,kanban</field>
         <field name="context">{'search_default_filter_is_available': True}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
