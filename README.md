@@ -1,3 +1,17 @@
+# Projeto: implementação de módulos de Imobiliária no Odoo
+## Descrição do Projeto
+O projeto aqui é toda a construção de um módulo (no framework Odoo) de "Imobiliária", com um módulo complementar que gera faturas.\
+Este projeto tem lógica e telas para colocar propriedades à venda, fazer ofertas para uma propriedade em venda e concretizar/cancelar uma venda (ainda que de forma simples).\
+Ele foi feito com base no tutorial do framework Odoo (https://www.odoo.com/documentation/15.0/developer/howtos/rdtraining.html).\
+\
+Código e commits desenvolvidos em inglês.
+
+## Principais dificuldades
+- Achar exemplos práticos dentro do código fonte para ir desenvolvendo o projeto.
+- Instalar o Odoo 15 no Windows. A primeira vista parecia ser algo complicado, mas hoje vejo que é simples. Acerca disso eu disponho um mini-manual de instalação para quem está interessado em instalar o módulo deste projeto.
+
+### Autor: Giovanni Dilly
+
 ## Para instalar o Odoo 15 (Windows)
 É necessário fazer uns esforços à mais para instalar o Odoo 15 além de meramente pegar o seu código do GitHub e jogar no seu projeto.\
 \
